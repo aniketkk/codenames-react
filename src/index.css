@@ -1,0 +1,120 @@
+@import url(https://fonts.googleapis.com/css?family=Nunito);
+*{
+    font-family: 'Nunito', sans-serif;
+}
+.card{
+    width:16%;
+    height:80%;
+    font-size: 17px;
+    background-color: #ece9e0d6;
+    border-radius: 5px;
+    display: inline-block;
+    transition-duration: 0.5s;
+    margin-right: 10px;
+    margin-bottom:10px;
+
+}
+
+.card:hover{
+    box-shadow: 0 14px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.card:focus{
+    outline: none;
+}
+
+.board-row{
+    width: inherit;
+    height: 20%;
+
+}
+.board{
+    width: inherit;
+    height:inherit;
+}
+.game{
+    display: flex;
+    width: 900px;
+    height:650px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+
+.team{
+    vertical-align:top;
+    width:500px;
+}
+.group::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.current-team{
+    margin:0;
+    display:inline-block;
+}
+
+.guessed-cards{
+    margin-top:20px;
+}
+
+.score{
+    float:right;
+}
+
+.current-score{
+    margin:0;
+    display:inherit;
+    float:right;
+}
+.score-title{
+    margin:0;
+    display:inherit;
+    float:left;
+}
+
+.card-selected{
+    background-color: aquamarine;
+}
+
+.card-set-red{
+    background-color: firebrick;
+}
+
+.card-set-blue{
+    background-color: dodgerblue;
+}
+.card-set-villager{
+    background-color: burlywood;
+}
+.card-set-black{
+    background-color: black;
+    color: white;
+}
+.card-text-white{
+    color: white;
+}
+
+.submit-button-blue{color: dodgerblue;
+    margin-left: 200px;
+}
+
+.current-team-red{
+    color:firebrick;
+}
+.current-team-blue{
+    color:dodgerblue;
+}
+
+
+.paper-text-align{
+    text-align: center;
+    padding-top: 40px;
+}
+
+.flex-grid {
+    flexGrow: 1
+}
