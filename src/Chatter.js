@@ -2,7 +2,7 @@ import React from 'react'
 import './chatterStyle.css'
 import io from "socket.io-client";
 import { COLORS, TYPING_TIMER_LENGTH } from './ChatterHelpers'
-import { LOCAL_CHAT_SERVER } from './Constants'
+import { LOCAL_CHAT_SERVER, CHAT_SERVER } from './Constants'
 export class Chatter extends React.Component {
     constructor() {
         super();
