@@ -18,7 +18,7 @@ export class Chatter extends React.Component {
             typingMessages:[]
         };
 
-        this.socket = io(LOCAL_CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
+        this.socket = io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
         //console.log(this.socket);
     }
 
