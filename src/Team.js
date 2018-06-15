@@ -19,7 +19,7 @@ export function Team(props){
                     <h2 className={props.currentTeam==='RED' ? 'current-score current-team-red': 'current-score'}>{props.redScore}</h2>
                 </div>
             </div>
-            <Chatter/>
+            <Chatter gameid={props.gameid}/>
         </div>
     );
 

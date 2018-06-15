@@ -2,7 +2,7 @@ import React from 'react'
 import './chatterStyle.css'
 import io from "socket.io-client";
 import { COLORS, TYPING_TIMER_LENGTH } from './ChatterHelpers'
-
+import { LOCAL_CHAT_SERVER } from './Constants'
 export class Chatter extends React.Component {
     constructor() {
         super();
@@ -18,11 +18,14 @@ export class Chatter extends React.Component {
             typingMessages:[]
         };
 
-        this.socket = io('localhost:3001', {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
+        this.socket = io(LOCAL_CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
+        //console.log(this.socket);
     }
 
 
     componentDidMount() {
+        const { gameid } = this.props;
+
 
         this.socket.on("add user", () => {console.log("added user")});//this.setState({ response: data })
 
@@ -79,10 +82,13 @@ export class Chatter extends React.Component {
         this.socket.on('reconnect_error', () => {
             this.log('attempt to reconnect has failed');
         });
+
+
     }
 
     // Sends a chat message
     sendMessage = () => {
+        const { gameid } = this.props;
         const { message, connected, username } = this.state;
 
         //var message = $inputMessage.val();
@@ -104,6 +110,7 @@ export class Chatter extends React.Component {
 
 
     handleKeyPressMessage = (event) => {
+        const { gameid } = this.props;
         // Auto-focus the current input when a key is typed
         let data ={username:this.state.username};
         this.socket.emit('typing', data);
@@ -116,10 +123,9 @@ export class Chatter extends React.Component {
             if (this.state.username !== '') {
                 this.sendMessage();
                 this.socket.emit('stop typing', {username:this.state.username});
-                this.setState({typing: false});
                 this.setState({
                     typingMessages:[...this.state.typingMessages, data],
-                    typing:true
+                    typing:false
                 })
             }
         }
@@ -128,6 +134,8 @@ export class Chatter extends React.Component {
 
     // Sets the client's username
     handleKeyPressUserName = (event) => {
+        const { gameid } = this.props;
+
         if (!(event.ctrlKey || event.metaKey || event.altKey))
             document.getElementById('usernameInput').focus();
 
@@ -135,7 +143,8 @@ export class Chatter extends React.Component {
 
         // If the username is valid
         if (event.which === 13) {
-            this.socket.emit('add user', username);
+            console.log({ gameId:gameid, username:username });
+            this.socket.emit('add user', { gameId:gameid, username:username });
             this.setState({userRegistered:true});
         }
     }
@@ -153,7 +162,8 @@ export class Chatter extends React.Component {
 
 
     updateTyping = (data) => {
-
+        const { gameid } = this.props;
+        console.log(data);
         if (this.state.connected) {
             if (!this.state.typing) {
                 this.setState({
@@ -165,6 +175,7 @@ export class Chatter extends React.Component {
 
 
             setTimeout(() => {
+
                 var typingTimer = (new Date()).getTime();
                 var timeDiff = typingTimer - this.state.lastTypingTime;
                 if (timeDiff >= TYPING_TIMER_LENGTH && this.state.typing) {

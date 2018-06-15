@@ -5,7 +5,8 @@ import AlertDialog from './AlertWinner'
 import AlertBlackTile from './AlertBlackTile'
 import {Board} from './Boards'
 import {Team} from './Team'
-
+import io from "socket.io-client";
+import { LOCAL_CHAT_SERVER, LOCAL_APP_SERVER, APP_SERVER, CHAT_SERVER } from './Constants';
 
 export class Game extends React.Component {
 
@@ -20,14 +21,15 @@ export class Game extends React.Component {
             redScore:0,
             blackSelected:false
         };
-        this.onSubmit = this.handleSubmit.bind(this);
+        //this.onSubmit = this.handleSubmit.bind(this);
+        this.socket = io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
     }
 
     componentDidMount() {
         const { gameid } = this.props.match.params;
 
 
-        fetch(`http://localhost:8080/game/${gameid}`, { //'https://pacific-tor-94185.herokuapp.com/master'
+        fetch(`${APP_SERVER}/game/${gameid}`, {
             method: 'GET'
         }).then(response => {
             if (response.status === 200) {
@@ -47,7 +49,7 @@ export class Game extends React.Component {
                 console.log("Game created");
             })
             .catch(error => {
-                fetch(`http://localhost:8080/game/${gameid}`, { //'https://pacific-tor-94185.herokuapp.com/master'
+                fetch(`${APP_SERVER}/game/${gameid}`, { //'https://pacific-tor-94185.herokuapp.com/master'
                     method: 'POST'
                 }).then(response => {
                     if (response.status === 200) {
@@ -65,13 +67,13 @@ export class Game extends React.Component {
             });
     }
 
-    handleSubmit(e) {
+    handleSubmit = (e) => {
         e.preventDefault();
         var self = this;
         // On submit of the form, send a POST request with the data to the server.
 
         const { gameid } = this.props.match.params; //'https://pacific-tor-94185.herokuapp.com/checkCorrectWords'
-        fetch(`http://localhost:8080/game/checkCorrectWords/${gameid}`, {
+        fetch(`${APP_SERVER}/game/checkCorrectWords/${gameid}`, {
             method: 'POST',
             body: JSON.stringify({
                 currentTeam: self.state.currentTeam,
@@ -86,7 +88,7 @@ export class Game extends React.Component {
                 return response.json()
             }).then(function(body) {
             this.playedTurn(body);
-        }.bind(this));
+        });
     }
 
     playedTurn = (body) => {
@@ -125,6 +127,14 @@ export class Game extends React.Component {
         })
     };
 
+    updateCardSelection = (val) => {
+        this.setState({
+            word: val.word
+        })
+
+    }
+
+
     checkWinner() {
         if (this.state.startTeam === 'BLUE') {
             if (this.state.blueScore === 9) {
@@ -157,15 +167,15 @@ export class Game extends React.Component {
         return (
             <div className="game">
                 <div className='board'>
-                <Board onUpdate={this.changeSelectedWords} selectedWords={this.state.selectedWords} words={this.state.words}/>
-                <div className="submit-button-blue">
-                    <Button onClick={this.onSubmit} size="large" variant="raised">
-                        Submit
-                    </Button>
-                </div>
+                    <Board onUpdate={this.changeSelectedWords} onSelect={this.updateCardSelection} selectedWords={this.state.selectedWords} words={this.state.words}/>
+                    <div className="submit-button-blue">
+                        <Button onClick={this.onSubmit} size="large" variant="raised">
+                            Submit
+                        </Button>
+                    </div>
                 </div>
                 <Team blueScore={this.state.blueScore} redScore={this.state.redScore}
-                      currentTeam={this.state.currentTeam}/>
+                      currentTeam={this.state.currentTeam} gameid={this.props.match.params.gameid}/>
                 {winnerModal}
                 {this.state.blackSelected === true ? <AlertBlackTile winner={this.state.currentTeam}/> : null}
 
