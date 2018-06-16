@@ -25,11 +25,26 @@ export class Game extends React.Component {
         this.socket = this.props.socket; //io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
     }
 
+
     componentDidMount() {
         const { gameid } = this.props.match.params;
+
+
         this.socket.on('selected words', (data) => {
             this.setState({
                 selectedWords: data.selectedWords
+            })
+        });
+
+        this.socket.on('state', (data) => {
+            console.log(data.words);
+            this.setState({
+                words:data.words,
+                selectedWords:[],
+                currentTeam:data.currentTeam,
+                blueScore:data.blueScore,
+                redScore:data.redScore,
+                blackSelected:data.blackSelected
             })
         });
 
@@ -50,7 +65,8 @@ export class Game extends React.Component {
                     currentTeam: body.starter,
                     startTeam: body.starter,
                     blueScore:body.blueScore,
-                    redScore:body.redScore
+                    redScore:body.redScore,
+                    selectedWords: []
                 });
                 console.log("Game created");
             })
@@ -107,6 +123,7 @@ export class Game extends React.Component {
         }
 
 
+
         this.setState({
             blueScore : body.correctBlueAnswers,
             redScore : body.correctRedAnswers,
@@ -116,16 +133,24 @@ export class Game extends React.Component {
         if(this.state.currentTeam === "BLUE") {
             this.setState({
                 currentTeam: "RED"
-            })
+            },
+                ()=>{
+                    this.socket.emit('state', {
+                        state: this.state
+                    });})
         }
         else {
             this.setState({
                 currentTeam : "BLUE"
-            })
+            }, ()=>{
+                this.socket.emit('state', {
+                state: this.state
+            });})
         }
 
 
-    };
+
+    }
 
     changeSelectedWords = (val) => {
         this.setState({
