@@ -1,11 +1,11 @@
 import React from 'react'
 import './chatterStyle.css'
-import io from "socket.io-client";
+
 import { COLORS, TYPING_TIMER_LENGTH } from './ChatterHelpers'
 import { LOCAL_CHAT_SERVER, CHAT_SERVER } from './Constants'
 export class Chatter extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             response: false,
             typing: false,
@@ -18,7 +18,7 @@ export class Chatter extends React.Component {
             typingMessages:[]
         };
 
-        this.socket = io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
+        this.socket = this.props.socket;//io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
         //console.log(this.socket);
     }
 

@@ -22,11 +22,17 @@ export class Game extends React.Component {
             blackSelected:false
         };
         //this.onSubmit = this.handleSubmit.bind(this);
-        this.socket = io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
+        this.socket = this.props.socket; //io(CHAT_SERVER, {transports: ['websocket', 'polling', 'flashsocket']});//https://github.com/socketio/socket.io-client/issues/641
     }
 
     componentDidMount() {
         const { gameid } = this.props.match.params;
+        this.socket.on('selected words', (data) => {
+            this.setState({
+                selectedWords: data.selectedWords
+            })
+        });
+
 
 
         fetch(`${APP_SERVER}/game/${gameid}`, {
@@ -84,9 +90,9 @@ export class Game extends React.Component {
             }
 
         })
-            .then(function(response) {
+            .then((response) => {
                 return response.json()
-            }).then(function(body) {
+            }).then((body) => {
             this.playedTurn(body);
         });
     }
@@ -102,10 +108,10 @@ export class Game extends React.Component {
 
 
         this.setState({
-                blueScore : body.correctBlueAnswers,
-                redScore : body.correctRedAnswers,
-                words: body.selectedCards,
-                selectedWords:[]
+            blueScore : body.correctBlueAnswers,
+            redScore : body.correctRedAnswers,
+            words: body.selectedCards,
+            selectedWords:[]
         })
         if(this.state.currentTeam === "BLUE") {
             this.setState({
@@ -125,14 +131,12 @@ export class Game extends React.Component {
         this.setState({
             selectedWords: val.selectedWords
         })
+        this.socket.emit('selected words', {
+            selectedWords: val.selectedWords
+        });
+
     };
 
-    updateCardSelection = (val) => {
-        this.setState({
-            word: val.word
-        })
-
-    }
 
 
     checkWinner() {
@@ -167,14 +171,14 @@ export class Game extends React.Component {
         return (
             <div className="game">
                 <div className='board'>
-                    <Board onUpdate={this.changeSelectedWords} onSelect={this.updateCardSelection} selectedWords={this.state.selectedWords} words={this.state.words}/>
+                    <Board onUpdate={this.changeSelectedWords}  selectedWords={this.state.selectedWords} words={this.state.words}/>
                     <div className="submit-button-blue">
-                        <Button onClick={this.onSubmit} size="large" variant="raised">
+                        <Button onClick={this.handleSubmit} size="large" variant="raised">
                             Submit
                         </Button>
                     </div>
                 </div>
-                <Team blueScore={this.state.blueScore} redScore={this.state.redScore}
+                <Team blueScore={this.state.blueScore} redScore={this.state.redScore} socket={this.props.socket}
                       currentTeam={this.state.currentTeam} gameid={this.props.match.params.gameid}/>
                 {winnerModal}
                 {this.state.blackSelected === true ? <AlertBlackTile winner={this.state.currentTeam}/> : null}
@@ -184,4 +188,3 @@ export class Game extends React.Component {
     }
 
 }
-

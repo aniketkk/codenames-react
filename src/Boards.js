@@ -14,7 +14,7 @@ export function Board(props){
 
                             {
                                 row.map(function(w){
-                                    return <Card key={w.id} onUpdate={props.onUpdate} onSelect={props.onSelect} className={getColor(w, props.words, props.selectedWords)} selectedWords={props.selectedWords} word={w}/>
+                                    return <Card key={w.id} onUpdate={props.onUpdate}  className={getColor(w, props.words, props.selectedWords)} selectedWords={props.selectedWords} word={w}/>
                                 })
                             }
                         </div>
@@ -32,13 +32,13 @@ export function MasterBoard(props){
             {
                 props.words.map(function(row){
                     return (
-                        <Grid>
+                        <div className='board-row'>
                             {
                                 row.map(function(w){
                                     return <MasterCard key={w.id} className={getColorMaster(w, props.words)} word={w}/>
                                 })
                             }
-                        </Grid>
+                        </div>
                     );
                 })
             }

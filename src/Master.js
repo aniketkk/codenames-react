@@ -2,6 +2,7 @@ import React from 'react'
 import './index.css'
 import { MasterBoard } from './Boards'
 import { APP_SERVER } from "./Constants";
+import {Chatter} from "./Chatter";
 
 export class Master extends React.Component {
     constructor(props){
@@ -14,7 +15,7 @@ export class Master extends React.Component {
     componentDidMount() {
         const { gameid } = this.props.match.params;
 
-        fetch(`${APP_SERVER}${gameid}`, { //'https://pacific-tor-94185.herokuapp.com/master'
+        fetch(`${APP_SERVER}/master/${gameid}`, { //'https://pacific-tor-94185.herokuapp.com/master'
             method: 'GET'
         }).then(response => {
             if (response.status === 200) {
@@ -40,6 +41,7 @@ export class Master extends React.Component {
         return (
             <div className="game">
                 <MasterBoard words={this.state.words}/>
+                <Chatter gameid={this.props.match.params.gameid} socket={this.props.socket}/>
             </div>
         );
     }

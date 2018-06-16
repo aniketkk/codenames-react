@@ -40,11 +40,7 @@ ul {
     border: 1px solid black;
 }
 
-.page {
-  height: inherit;
-  position: absolute;
-  width: inherit;
-}
+
 
 /* Login Page */
 

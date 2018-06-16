@@ -34,7 +34,6 @@ export class Card extends React.Component {
 
         let newVal = this.addAndRemoveWords(val);
         this.props.onUpdate(newVal);
-        this.props.onSelect({word: val});
 
     }
 
